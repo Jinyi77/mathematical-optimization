@@ -18,7 +18,7 @@ function nelder_mead(obj_fun::Function,
     # Initialize the iteration counts
     itr = 0
 
-    # Create the initial simplex
+    # Initialize the simplex
     n = length(init_point)
     p = repmat(init_point, 1, n+1)
     for i = 1:n
