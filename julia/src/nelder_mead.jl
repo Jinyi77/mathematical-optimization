@@ -14,17 +14,22 @@ function nelder_mead(obj_fun::Function,
                      γ::Float64 = 2.0,
                      ρ::Float64 = -0.5,
                      σ::Float64 = 0.5)
+
+    # Initialize the iteration counts
     itr = 0
+
+    # Create the initial simplex
     n = length(init_point)
     p = repmat(init_point, 1, n+1)
     for i = 1:n
         p[i, i] += init_increments[i]
     end
 
+    # Main loop for the simplex searching using Nelder Mead algorithm
     while true
         evals = Float64[obj_fun(vec(p[:, j])) for j =1:3]
-
         itr += 1
+
         # Step1: Ordering
         p = p[:, sortperm(evals)]
 
