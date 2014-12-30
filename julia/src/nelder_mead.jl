@@ -54,12 +54,12 @@ function nelder_mead(obj_fun::Function,
         end
 
         if sqrt(var(evals) *2/3) < tol
-            #println("Algorithm converges with $itr iterations")
+            println("Algorithm converges with $itr iterations")
             return (obj_fun(vec(mean(p, 2))), mean(p, 2))
         end
 
         if itr == max_itr
-            #println("Reach the maximum number of iterations($itr ) before converge")
+            println("Reach the maximum number of iterations($itr ) before converge")
             return (obj_fun(vec(mean(p, 2))), mean(p, 2))
         end
     end
