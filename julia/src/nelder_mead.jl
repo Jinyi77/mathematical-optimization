@@ -15,8 +15,9 @@ function nelder_mead(obj_fun::Function,
                      ρ::Float64 = -0.5,
                      σ::Float64 = 0.5)
     itr = 0
-    p = repmat(init_point, 1, length(init_point) + 1)
-    for i = 1:length(init_point)
+    n = length(init_point)
+    p = repmat(init_point, 1, n+1)
+    for i = 1:n
         p[i, i] += init_increments[i]
     end
 
@@ -32,7 +33,7 @@ function nelder_mead(obj_fun::Function,
 
         # Step3: Reflection
         p_r = p_o + α * (p_o - vec(p[:, end]))
-        if obj_fun(vec(p[:, 1])) <= obj_fun(p_r) <obj_fun(vec(p[:, end - 1]))
+        if obj_fun(vec(p[:, 1])) <= obj_fun(p_r) <obj_fun(vec(p[:, end-1]))
             p[:, end] = deepcopy(p_r)
         # Step3.1: Expansion
         elseif obj_fun(p_r) < obj_fun(vec(p[:, 1]))
@@ -49,17 +50,18 @@ function nelder_mead(obj_fun::Function,
                 p[:, end] = deepcopy(p_c)
             # Step3.2.1: Reduction
             else
-              p[:,2:end] = deepcopy(broadcast(+, (σ - 1) * vec(p[:, 1]), p[:,2:end]))
+              p[:, 2:end] = deepcopy(broadcast(+, (σ - 1) * vec(p[:, 1]),
+                                               p[:, 2:end]))
             end
         end
 
-        if sqrt(var(evals) *2/3) < tol
+        if sqrt(var(evals) * n / (n+1)) < tol
             println("Algorithm converges with $itr iterations")
             return (obj_fun(vec(mean(p, 2))), mean(p, 2))
         end
 
         if itr == max_itr
-            println("Reach the maximum number of iterations($itr ) before converge")
+            println("Reach the max number of iterations($itr ) before converge")
             return (obj_fun(vec(mean(p, 2))), mean(p, 2))
         end
     end
